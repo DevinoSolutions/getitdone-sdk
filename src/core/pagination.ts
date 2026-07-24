@@ -70,6 +70,7 @@ export class PagePromise<Item>
 {
     constructor(private readonly promise: Promise<Page<Item>>) {}
 
+    // oxlint-disable-next-line unicorn/no-thenable -- 2026-07-24 being thenable IS this class's contract: `await list()` must resolve to a Page while the same handle stays async-iterable (open-api D9 pagination ergonomics)
     then<TResult1 = Page<Item>, TResult2 = never>(
         onfulfilled?:
             | ((value: Page<Item>) => TResult1 | PromiseLike<TResult1>)

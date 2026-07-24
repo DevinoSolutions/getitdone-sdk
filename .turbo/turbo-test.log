@@ -1,0 +1,20 @@
+
+> @getitdone/sdk@0.0.0 test C:\Users\alaed\Documents\Github\GetItDone\packages\sdk
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.10 [39m[90mC:/Users/alaed/Documents/Github/GetItDone/packages/sdk[39m
+
+ [32m✓[39m tests/webhooks.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m tests/pagination.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m tests/errors.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [32m✓[39m tests/logger-redaction.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m tests/client.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m tests/http-retry.test.ts [2m([22m[2m20 tests[22m[2m)[22m[33m 527[2mms[22m[39m
+     [33m[2m✓[22m[39m retries a GET that fails at the network level and then throws APIConnectionError carrying the original cause once the budget is exhausted [33m 391[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m60 passed[39m[22m[90m (60)[39m
+[2m   Start at [22m 04:13:21
+[2m   Duration [22m 1.41s[2m (transform 637ms, setup 0ms, import 2.39s, tests 724ms, environment 1ms)[22m
+
