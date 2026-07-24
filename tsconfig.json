@@ -1,0 +1,10 @@
+{
+    "extends": "@getitdone/typescript-config/node.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "noEmit": true,
+        "types": ["node"],
+        "resolveJsonModule": true
+    },
+    "include": ["src/**/*", "tests/**/*", "tsup.config.ts", "package.json"]
+}
