@@ -1,5 +1,5 @@
 /**
- * Standard Webhooks verification for YOUR server (`@getitdone/sdk/webhooks`).
+ * Standard Webhooks verification for YOUR server (`@nowgetitdone/sdk/webhooks`).
  *
  * SERVER-ONLY subpath (node:crypto): verify the `webhook-id` /
  * `webhook-timestamp` / `webhook-signature` headers GetItDone sends to your

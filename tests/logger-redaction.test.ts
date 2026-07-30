@@ -64,14 +64,15 @@ describe('logger events and secret redaction on a retried request', () => {
 
     it('emits a debug request event per attempt, a debug response event carrying status and requestId, and a warn retry event', () => {
         const requestEvents = captured.events.filter(
-            e => e.level === 'debug' && e.message === 'getitdone-sdk request',
+            e =>
+                e.level === 'debug' && e.message === 'nowgetitdone-sdk request',
         )
         expect(requestEvents.length).toBeGreaterThanOrEqual(2)
 
         const successResponse = captured.events.find(
             e =>
                 e.level === 'debug' &&
-                e.message === 'getitdone-sdk response' &&
+                e.message === 'nowgetitdone-sdk response' &&
                 e.data?.status === 201,
         )
         expect(successResponse).toBeDefined()
@@ -80,7 +81,7 @@ describe('logger events and secret redaction on a retried request', () => {
         const retryEvent = captured.events.find(
             e =>
                 e.level === 'warn' &&
-                e.message === 'getitdone-sdk retrying request',
+                e.message === 'nowgetitdone-sdk retrying request',
         )
         expect(retryEvent).toBeDefined()
         expect(retryEvent?.data?.status).toBe(500)
@@ -91,7 +92,7 @@ describe('logger events and secret redaction on a retried request', () => {
         expect(serialized).not.toContain(SECRET_API_KEY)
 
         const requestEvents = captured.events.filter(
-            e => e.message === 'getitdone-sdk request',
+            e => e.message === 'nowgetitdone-sdk request',
         )
         for (const event of requestEvents) {
             const headers = event.data?.headers as Record<string, string>
@@ -121,7 +122,7 @@ describe('redaction under the x-api-key auth style', () => {
         await client.tasks.retrieve('T-21')
 
         const requestEvent = events.find(
-            e => e.message === 'getitdone-sdk request',
+            e => e.message === 'nowgetitdone-sdk request',
         )
         expect(requestEvent).toBeDefined()
         const headers = requestEvent?.data?.headers as Record<string, string>

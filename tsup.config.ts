@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup'
 
 /**
- * Publish build for @getitdone/sdk (open-api Phase 4).
+ * Publish build for @nowgetitdone/sdk (open-api Phase 4).
  *
  * - `@getitdone/api-contracts` (and its `@getitdone/auth-scopes` type dep) are
  *   BUNDLED (`noExternal`) — the contracts package is private to the monorepo,

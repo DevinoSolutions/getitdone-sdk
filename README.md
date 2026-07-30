@@ -1,4 +1,4 @@
-# @getitdone/sdk
+# @nowgetitdone/sdk
 
 Official TypeScript SDK for the [GetItDone](https://nowgetitdone.com) public
 API — AI-native task management for people and agents.
@@ -15,7 +15,7 @@ API — AI-native task management for people and agents.
 ## Install
 
 ```sh
-npm install @getitdone/sdk
+npm install @nowgetitdone/sdk
 ```
 
 Requires Node.js 20+. TypeScript types are bundled; `zod` is the only
@@ -27,7 +27,7 @@ Create an API key in [app.nowgetitdone.com](https://app.nowgetitdone.com)
 under **Settings → API keys**, then:
 
 ```ts
-import GetItDone from '@getitdone/sdk'
+import GetItDone from '@nowgetitdone/sdk'
 
 const client = new GetItDone({
     apiKey: process.env.GETITDONE_API_KEY, // gid_… (defaults to this env var)
@@ -54,7 +54,7 @@ problem document. Branch on `error.code` — it is a frozen vocabulary; `title`
 and `detail` are for humans.
 
 ```ts
-import { APIError, RateLimitError, NotFoundError } from '@getitdone/sdk'
+import { APIError, RateLimitError, NotFoundError } from '@nowgetitdone/sdk'
 
 try {
     await client.tasks.retrieve('T-999')
@@ -104,7 +104,7 @@ GetItDone signs outbound webhooks per the
 request bytes — never a parsed-and-reserialized body:
 
 ```ts
-import { verifyWebhook } from '@getitdone/sdk/webhooks'
+import { verifyWebhook } from '@nowgetitdone/sdk/webhooks'
 
 // e.g. in an Express handler with `express.raw({ type: '*/*' })`:
 const result = verifyWebhook({
@@ -117,7 +117,7 @@ if (!result.valid) {
 }
 ```
 
-`@getitdone/sdk/webhooks` is server-only (`node:crypto`). During a secret
+`@nowgetitdone/sdk/webhooks` is server-only (`node:crypto`). During a secret
 rotation grace window, pass both secrets: `secret: [current, previous]`.
 
 ## Escape hatches

@@ -96,7 +96,7 @@ describe('auth header styles', () => {
 })
 
 describe('user-agent versioning', () => {
-    it('sends user-agent getitdone-sdk/<VERSION> where VERSION equals the version field of package.json', async () => {
+    it('sends user-agent nowgetitdone-sdk/<VERSION> where VERSION equals the version field of package.json', async () => {
         const packageJson = JSON.parse(
             readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
         ) as { version: string }
@@ -106,7 +106,7 @@ describe('user-agent versioning', () => {
         const client = makeTestClient(harness)
         await client.tasks.retrieve('T-1')
         expect(harness.calls[0]?.headers['user-agent']).toBe(
-            `getitdone-sdk/${VERSION}`,
+            `nowgetitdone-sdk/${VERSION}`,
         )
     })
 })

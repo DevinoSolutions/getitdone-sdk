@@ -4,6 +4,8 @@ import type {
     getWebhookEndpointRoute,
     listWebhookEndpointDeliveriesRoute,
     listWebhookEndpointsRoute,
+    replayFailedWebhookDeliveriesRoute,
+    replayWebhookDeliveryRoute,
     rotateWebhookEndpointSecretRoute,
     testWebhookEndpointEventRoute,
     updateWebhookEndpointRoute,
@@ -51,6 +53,16 @@ export type WebhookDelivery = EnvelopeItem<
 >
 export type ListWebhookDeliveriesQuery = RouteQuery<
     typeof listWebhookEndpointDeliveriesRoute
+>
+/** A single freshly-enqueued replay delivery (same shape as a log row). */
+export type ReplayedWebhookDelivery = RouteResult<
+    typeof replayWebhookDeliveryRoute
+>
+export type ReplayFailedWebhookDeliveriesBody = RouteBody<
+    typeof replayFailedWebhookDeliveriesRoute
+>
+export type ReplayedWebhookDeliveries = RouteResult<
+    typeof replayFailedWebhookDeliveriesRoute
 >
 
 /** Outbound webhooks are PRO+ (403 `feature_not_enabled` on FREE). */
@@ -169,6 +181,43 @@ export class WebhookEndpoints extends ApiResource {
             method: 'GET',
             path: `/v1/webhook-endpoints/${encodeURIComponent(endpointId)}/deliveries`,
             query,
+            options,
+        })
+    }
+
+    /**
+     * Replay ONE terminal (FAILED/SUCCEEDED/DISABLED) delivery — creates a
+     * FRESH PENDING delivery for the same event. 409 `delivery_already_pending`
+     * when one is already queued (which also makes a double-click safe), so
+     * this is NOT declared idempotent and never carries an Idempotency-Key.
+     */
+    replayDelivery(
+        endpointId: string,
+        deliveryId: string,
+        options?: RequestOptions,
+    ): Promise<ReplayedWebhookDelivery> {
+        return this._core.request({
+            method: 'POST',
+            path: `/v1/webhook-endpoints/${encodeURIComponent(endpointId)}/deliveries/${encodeURIComponent(deliveryId)}/replay`,
+            options,
+        })
+    }
+
+    /**
+     * Bulk-replay every FAILED/DISABLED delivery on the endpoint created at or
+     * after `since` (skips events already queued, capped at 1000/call).
+     * Naturally near-idempotent for the same reason as `replayDelivery`, so it
+     * carries no Idempotency-Key.
+     */
+    replayFailed(
+        endpointId: string,
+        body: ReplayFailedWebhookDeliveriesBody,
+        options?: RequestOptions,
+    ): Promise<ReplayedWebhookDeliveries> {
+        return this._core.request({
+            method: 'POST',
+            path: `/v1/webhook-endpoints/${encodeURIComponent(endpointId)}/replay-failed`,
+            body,
             options,
         })
     }

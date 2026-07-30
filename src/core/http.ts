@@ -94,7 +94,7 @@ function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-const TIMEOUT_ABORT_REASON = Symbol('getitdone-sdk-timeout')
+const TIMEOUT_ABORT_REASON = Symbol('nowgetitdone-sdk-timeout')
 
 function buildQueryString(query: Record<string, unknown> | undefined): string {
     if (!query) return ''
@@ -194,15 +194,18 @@ export class HttpCore {
                         retryAfterSeconds !== null
                             ? retryAfterSeconds * 1000
                             : backoffMs(attempt)
-                    this.config.logger.warn('getitdone-sdk retrying request', {
-                        method: params.method,
-                        path: params.path,
-                        status: response.status,
-                        attempt: attempt + 1,
-                        maxRetries,
-                        delayMs: Math.round(delayMs),
-                        requestId,
-                    })
+                    this.config.logger.warn(
+                        'nowgetitdone-sdk retrying request',
+                        {
+                            method: params.method,
+                            path: params.path,
+                            status: response.status,
+                            attempt: attempt + 1,
+                            maxRetries,
+                            delayMs: Math.round(delayMs),
+                            requestId,
+                        },
+                    )
                     attempt += 1
                     await sleep(delayMs)
                     continue
@@ -224,7 +227,7 @@ export class HttpCore {
                       })
             if (retryEligible && attempt < maxRetries) {
                 const delayMs = backoffMs(attempt)
-                this.config.logger.warn('getitdone-sdk retrying request', {
+                this.config.logger.warn('nowgetitdone-sdk retrying request', {
                     method: params.method,
                     path: params.path,
                     failure: outcome.kind,
@@ -247,7 +250,7 @@ export class HttpCore {
     ): Record<string, string> {
         const headers: Record<string, string> = {
             accept: 'application/json',
-            'user-agent': `getitdone-sdk/${VERSION}`,
+            'user-agent': `nowgetitdone-sdk/${VERSION}`,
             ...this.config.defaultHeaders,
             ...options.headers,
         }
@@ -289,7 +292,7 @@ export class HttpCore {
         )
         const fetchFn = this.config.fetchFn
         const startedAt = Date.now()
-        this.config.logger.debug('getitdone-sdk request', {
+        this.config.logger.debug('nowgetitdone-sdk request', {
             method: params.method,
             url,
             headers: redactHeaders(headers),
@@ -304,7 +307,7 @@ export class HttpCore {
                         : JSON.stringify(params.body),
                 signal: controller.signal,
             })
-            this.config.logger.debug('getitdone-sdk response', {
+            this.config.logger.debug('nowgetitdone-sdk response', {
                 method: params.method,
                 url,
                 status: response.status,

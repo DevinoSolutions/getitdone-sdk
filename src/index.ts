@@ -1,8 +1,8 @@
 /**
- * @getitdone/sdk — official TypeScript SDK for the GetItDone public API.
+ * @nowgetitdone/sdk — official TypeScript SDK for the GetItDone public API.
  *
  * Browser-safe entry: no `node:` imports. The Standard Webhooks signature
- * verifier for YOUR server lives in the `@getitdone/sdk/webhooks` subpath
+ * verifier for YOUR server lives in the `@nowgetitdone/sdk/webhooks` subpath
  * (node:crypto).
  */
 export {
@@ -84,6 +84,9 @@ export type {
     CreatedWebhookEndpoint,
     ListWebhookDeliveriesQuery,
     ListWebhookEndpointsQuery,
+    ReplayFailedWebhookDeliveriesBody,
+    ReplayedWebhookDeliveries,
+    ReplayedWebhookDelivery,
     RotatedWebhookEndpointSecret,
     UpdateWebhookEndpointBody,
     WebhookDelivery,

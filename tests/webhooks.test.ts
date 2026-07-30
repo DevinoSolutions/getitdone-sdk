@@ -1,5 +1,5 @@
 /**
- * Pins the `@getitdone/sdk/webhooks` verification helper against the REAL
+ * Pins the `@nowgetitdone/sdk/webhooks` verification helper against the REAL
  * signer: `signWebhookPayload` from `@getitdone/api-contracts` is the exact
  * code the GetItDone delivery worker signs with, so a round-trip here proves
  * customer-side verification accepts genuine deliveries.
