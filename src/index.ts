@@ -71,11 +71,18 @@ export type {
     Project,
 } from './resources/projects'
 export type {
+    AddTaskDependencyBody,
     CreateTaskBody,
     ListTaskHistoryQuery,
+    ListTaskOccurrencesQuery,
     ListTasksQuery,
+    SetTaskOccurrenceStatusBody,
     Task,
+    TaskDependencies,
+    TaskDependencyRef,
     TaskHistoryEntry,
+    TaskOccurrence,
+    TaskRecurrence,
     UpdateTaskBody,
 } from './resources/tasks'
 export type { Usage } from './resources/usage'

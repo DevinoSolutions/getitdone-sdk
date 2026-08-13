@@ -145,9 +145,18 @@ await client.tasks.create(
 | `timeoutMs`               | `60000`                        | per attempt                                  |
 | `maxRetries`              | `2`                            | after the first attempt                      |
 | `maxRetryAfterSeconds`    | `60`                           | larger `Retry-After` ⇒ give up               |
-| `authStyle`               | `'authorization'`              | or `'x-api-key'`                             |
+| `authStyle`               | `'authorization'`              | **deprecated** — see below; removed in 0.2.0 |
 | `logger`                  | none                           | redacted request/response/retry events       |
 | `dangerouslyAllowBrowser` | `false`                        | API keys are secrets — keep them server-side |
+
+### `authStyle` is deprecated
+
+The `/v1` API is **Bearer-only**: it reads `Authorization: Bearer gid_…` and
+nothing else. `authStyle: 'x-api-key'` never worked — that header is a legacy
+`/api/*` scheme, and `/v1` answers `401 missing_credentials` without ever
+looking at the key. The SDK now logs a deprecation warning and sends Bearer
+anyway, so calls that previously failed 100% of the time succeed. Drop the
+option; it is removed in 0.2.0.
 
 ## Development
 

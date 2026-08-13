@@ -207,6 +207,19 @@ describe('POST retry safety and idempotency keys', () => {
         expect(harness.calls).toHaveLength(2)
     })
 
+    it('does not retry a permanent 409 even with an idempotency key, because a refused dependency cycle stays refused however often it is asked', async () => {
+        const harness = createQueuedFetch([
+            problemReply(409, 'dependency_cycle', {
+                headers: { 'retry-after': '0' },
+            }),
+        ])
+        const client = makeTestClient(harness)
+        await expect(
+            client.tasks.addDependency('T-14', { blocker_task_id: 'T-15' }),
+        ).rejects.toBeInstanceOf(ConflictError)
+        expect(harness.calls).toHaveLength(1)
+    })
+
     it('does not retry a 409 on a request that carried no idempotency key (PATCH) and throws ConflictError after one call', async () => {
         const harness = createQueuedFetch([
             problemReply(409, 'idempotency_in_progress', {

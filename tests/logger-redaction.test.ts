@@ -108,15 +108,15 @@ describe('logger events and secret redaction on a retried request', () => {
     })
 })
 
-describe('redaction under the x-api-key auth style', () => {
-    it('presents the x-api-key header only as [REDACTED] in request events', async () => {
+describe('redaction of a caller-supplied x-api-key header', () => {
+    it('presents an x-api-key default header only as [REDACTED] in request events, even though /v1 itself is Bearer-only', async () => {
         const { logger, events } = createCapturingLogger()
         const harness = createQueuedFetch([
             { status: 200, jsonBody: { id: 'T-21', title: 'Fixture' } },
         ])
         const client = makeTestClient(harness, {
             apiKey: SECRET_API_KEY,
-            authStyle: 'x-api-key',
+            defaultHeaders: { 'x-api-key': SECRET_API_KEY },
             logger,
         })
         await client.tasks.retrieve('T-21')

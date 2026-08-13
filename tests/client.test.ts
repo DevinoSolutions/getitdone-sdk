@@ -1,14 +1,18 @@
 /**
  * Pins the GetItDone client constructor contract (open-api D9): key
- * sourcing, browser guard, base-URL normalization, auth header styles,
+ * sourcing, browser guard, base-URL normalization, the Bearer-only auth
+ * header (plus the deprecated `x-api-key` style's warn-and-ignore behavior),
  * user-agent versioning, default-header merging, the raw-request escape
  * hatch, and query serialization.
  */
 import { readFileSync } from 'node:fs'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { GetItDone } from '../src/client'
+import {
+    GetItDone,
+    X_API_KEY_AUTH_STYLE_DEPRECATION_MESSAGE,
+} from '../src/client'
 import { GetItDoneError } from '../src/error'
 import { VERSION } from '../src/version'
 import {
@@ -75,8 +79,8 @@ describe('base URL normalization', () => {
     })
 })
 
-describe('auth header styles', () => {
-    it('sends authorization: Bearer <key> and no x-api-key header under the default auth style', async () => {
+describe('auth header scheme', () => {
+    it('sends authorization: Bearer <key> and no x-api-key header, the only scheme /v1 accepts', async () => {
         const harness = createQueuedFetch([taskReply])
         const client = makeTestClient(harness)
         await client.tasks.retrieve('T-1')
@@ -86,12 +90,52 @@ describe('auth header styles', () => {
         expect(harness.calls[0]?.headers).not.toHaveProperty('x-api-key')
     })
 
-    it("sends the key in the x-api-key header and no authorization header at all under authStyle 'x-api-key'", async () => {
+    it("still sends Bearer and never an x-api-key header when the deprecated authStyle 'x-api-key' is passed, because /v1 answers 401 missing_credentials to that header", async () => {
         const harness = createQueuedFetch([taskReply])
-        const client = makeTestClient(harness, { authStyle: 'x-api-key' })
-        await client.tasks.retrieve('T-1')
-        expect(harness.calls[0]?.headers['x-api-key']).toBe(TEST_API_KEY)
-        expect(harness.calls[0]?.headers).not.toHaveProperty('authorization')
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        try {
+            const client = makeTestClient(harness, { authStyle: 'x-api-key' })
+            await client.tasks.retrieve('T-1')
+        } finally {
+            warn.mockRestore()
+        }
+        expect(harness.calls[0]?.headers['authorization']).toBe(
+            `Bearer ${TEST_API_KEY}`,
+        )
+        expect(harness.calls[0]?.headers).not.toHaveProperty('x-api-key')
+    })
+
+    it("warns at construction that authStyle 'x-api-key' is deprecated and ignored, and stays silent under the default scheme", () => {
+        const { fetchFn } = createQueuedFetch([])
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        try {
+            new GetItDone({
+                apiKey: TEST_API_KEY,
+                baseUrl: TEST_BASE_URL,
+                fetch: fetchFn,
+                authStyle: 'x-api-key',
+            })
+            expect(warn).toHaveBeenCalledTimes(1)
+            expect(warn).toHaveBeenCalledWith(
+                X_API_KEY_AUTH_STYLE_DEPRECATION_MESSAGE,
+            )
+            warn.mockClear()
+
+            new GetItDone({
+                apiKey: TEST_API_KEY,
+                baseUrl: TEST_BASE_URL,
+                fetch: fetchFn,
+                authStyle: 'authorization',
+            })
+            new GetItDone({
+                apiKey: TEST_API_KEY,
+                baseUrl: TEST_BASE_URL,
+                fetch: fetchFn,
+            })
+            expect(warn).not.toHaveBeenCalled()
+        } finally {
+            warn.mockRestore()
+        }
     })
 })
 

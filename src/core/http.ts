@@ -3,9 +3,10 @@
  *
  * Retry contract (pinned by tests/http-retry.test.ts):
  * - Retried failures: network errors, per-attempt timeouts, HTTP 408, 429
- *   (honoring `Retry-After`), 5xx — and 409 ONLY when an Idempotency-Key was
- *   sent (the API's only 409 is `idempotency_in_progress`, which resolves to
- *   a replay once the first execution finishes).
+ *   (honoring `Retry-After`), 5xx — and a 409 ONLY when it is
+ *   `idempotency_in_progress` on a request that carried a key (it resolves to
+ *   a replay once the first execution finishes). Other 409s are permanent
+ *   refusals about state, e.g. `dependency_cycle`.
  * - A POST is NEVER retried without an Idempotency-Key (unsafe mutation —
  *   open-api D9); every consequential POST in the /v1 registry is declared
  *   `idempotent`, and for those the SDK AUTO-GENERATES a key, computed ONCE
@@ -71,7 +72,6 @@ export interface HttpCoreConfig {
     timeoutMs: number
     maxRetries: number
     maxRetryAfterSeconds: number
-    authStyle: 'authorization' | 'x-api-key'
     fetchFn: typeof globalThis.fetch
     defaultHeaders: Record<string, string>
     logger: SdkLogger
@@ -79,8 +79,23 @@ export interface HttpCoreConfig {
 
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504])
 
-function isRetryableStatus(status: number, idempotencyKeySent: boolean) {
-    if (status === 409) return idempotencyKeySent
+/**
+ * A 409 is retried ONLY when it is `idempotency_in_progress` on a request
+ * that carried a key — that one resolves into a replay as soon as the first
+ * execution settles. The code is checked explicitly rather than inferred from
+ * the status: `dependency_cycle` is also a 409 and is PERMANENT, so retrying
+ * it would spend three calls of the caller's burst allowance to be told the
+ * same thing. A 409 whose body did not parse is not retried either — an
+ * unrecognized conflict is not known to be transient.
+ */
+function isRetryableStatus(
+    status: number,
+    idempotencyKeySent: boolean,
+    problemCode: string | undefined,
+) {
+    if (status === 409) {
+        return idempotencyKeySent && problemCode === 'idempotency_in_progress'
+    }
     return RETRYABLE_STATUSES.has(status) || status >= 500
 }
 
@@ -186,6 +201,7 @@ export class HttpCore {
                     isRetryableStatus(
                         response.status,
                         idempotencyKey !== undefined,
+                        problem?.code,
                     ) &&
                     (retryAfterSeconds === null ||
                         retryAfterSeconds <= this.config.maxRetryAfterSeconds)
@@ -255,12 +271,10 @@ export class HttpCore {
             ...options.headers,
         }
         // Auth is set LAST — per-request headers cannot override it with a
-        // stale credential by accident.
-        if (this.config.authStyle === 'x-api-key') {
-            headers['x-api-key'] = this.config.apiKey
-        } else {
-            headers['authorization'] = `Bearer ${this.config.apiKey}`
-        }
+        // stale credential by accident. `/v1` is Bearer-ONLY (the handler
+        // chain reads the Authorization header and nothing else), so there is
+        // no second scheme to choose between.
+        headers['authorization'] = `Bearer ${this.config.apiKey}`
         if (params.body !== undefined) {
             headers['content-type'] = 'application/json'
         }

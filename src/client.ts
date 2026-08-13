@@ -42,8 +42,14 @@ export interface GetItDoneOptions {
     /** A `Retry-After` above this gives up instead of waiting. Default 60. */
     maxRetryAfterSeconds?: number
     /**
-     * How to present the key: `authorization` (`Bearer …`, default) or the
-     * `x-api-key` header — the API accepts both.
+     * @deprecated `/v1` is Bearer-only, so this option has exactly one working
+     * value and will be REMOVED in the next minor (0.2.0). `'x-api-key'` never
+     * worked: `createPublicRouteHandler` reads the `Authorization` header only
+     * and answers `401 missing_credentials` before it ever looks at the key
+     * (the `x-api-key` header is a legacy `/api/*` scheme). Passing it now logs
+     * a deprecation warning and sends `Authorization: Bearer …` anyway, so
+     * calls that used to fail 100% of the time start succeeding. Drop the
+     * option — the default is the only supported scheme.
      */
     authStyle?: 'authorization' | 'x-api-key'
     /** Custom fetch (test injection / proxying). Defaults to global fetch. */
@@ -58,6 +64,17 @@ export interface GetItDoneOptions {
      */
     dangerouslyAllowBrowser?: boolean
 }
+
+/**
+ * Emitted once per client constructed with the dead `x-api-key` auth style.
+ * Exported for the regression test, NOT part of the package's public surface
+ * (`src/index.ts` does not re-export it).
+ */
+export const X_API_KEY_AUTH_STYLE_DEPRECATION_MESSAGE =
+    "[@nowgetitdone/sdk] `authStyle: 'x-api-key'` is deprecated and IGNORED. The /v1 API is " +
+    'Bearer-only: it answers 401 missing_credentials to an x-api-key header without ever ' +
+    'reading the key, so every call under that style failed. Sending `Authorization: Bearer …` ' +
+    'instead. Remove the option — it is deleted in 0.2.0.'
 
 function readEnv(name: string): string | undefined {
     if (typeof process === 'undefined') return undefined
@@ -103,6 +120,9 @@ export class GetItDone {
                     'Create one at https://app.nowgetitdone.com/settings (API keys).',
             )
         }
+        if (options.authStyle === 'x-api-key') {
+            console.warn(X_API_KEY_AUTH_STYLE_DEPRECATION_MESSAGE)
+        }
         this.baseUrl = (
             options.baseUrl ??
             readEnv('GETITDONE_BASE_URL') ??
@@ -115,7 +135,6 @@ export class GetItDone {
             maxRetries: options.maxRetries ?? DEFAULT_MAX_RETRIES,
             maxRetryAfterSeconds:
                 options.maxRetryAfterSeconds ?? DEFAULT_MAX_RETRY_AFTER_SECONDS,
-            authStyle: options.authStyle ?? 'authorization',
             fetchFn: options.fetch ?? globalThis.fetch,
             defaultHeaders: options.defaultHeaders ?? {},
             logger: options.logger ?? noopLogger,
