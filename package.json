@@ -1,6 +1,6 @@
 {
     "name": "@nowgetitdone/sdk",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Official TypeScript SDK for the GetItDone public API (https://app.nowgetitdone.com/v1).",
     "license": "MIT",
     "type": "module",
