@@ -33,6 +33,15 @@ export default defineConfig({
         resolve: true,
         compilerOptions: {
             baseUrl: '.',
+            // TODO: 2026-08-14 — remove this the moment tsup stops injecting
+            // `baseUrl` into the dts build. TypeScript 6 makes `baseUrl` a hard
+            // error (TS5101, "deprecated and will stop functioning in
+            // TypeScript 7.0"), and tsup 8.5.1 (the latest release) hard-codes
+            // `baseUrl: compilerOptions.baseUrl || "."` at dist/rollup.js:6837 —
+            // so dropping the line above does NOT help, tsup re-adds it. This
+            // bridge is the only way to build the published .d.ts under TS 6.
+            // It stops working at TypeScript 7, which forces the fix then.
+            ignoreDeprecations: '6.0',
             paths: {
                 '@getitdone/api-contracts': [
                     './.contract-types/api-contracts/src/index.d.ts',
