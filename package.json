@@ -65,7 +65,7 @@
         "prepublishOnly": "pnpm build"
     },
     "dependencies": {
-        "zod": "^4.0.9"
+        "zod": "^4.5.4"
     },
     "devDependencies": {
         "@getitdone/api-contracts": "workspace:*",
