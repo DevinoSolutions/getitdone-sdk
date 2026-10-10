@@ -62,8 +62,40 @@
         "typecheck": "tsc --noEmit",
         "lint": "eslint src tests",
         "test": "vitest run",
+        "size-limit": "size-limit",
         "prepublishOnly": "pnpm build"
     },
+    "size-limit": [
+        {
+            "name": "index (ESM, as a bundler ships it)",
+            "path": "dist/index.js",
+            "limit": "4.1 kB"
+        },
+        {
+            "name": "webhooks (ESM, as a bundler ships it)",
+            "path": "dist/webhooks.js",
+            "ignore": [
+                "crypto"
+            ],
+            "limit": "900 B"
+        },
+        {
+            "name": "index (CJS, the published file itself)",
+            "path": "dist/index.cjs",
+            "disablePlugins": [
+                "@size-limit/esbuild"
+            ],
+            "limit": "7.6 kB"
+        },
+        {
+            "name": "webhooks (CJS, the published file itself)",
+            "path": "dist/webhooks.cjs",
+            "disablePlugins": [
+                "@size-limit/esbuild"
+            ],
+            "limit": "1.6 kB"
+        }
+    ],
     "dependencies": {
         "zod": "^4.5.4"
     },
@@ -72,8 +104,10 @@
         "@getitdone/auth-scopes": "workspace:*",
         "@getitdone/eslint-config": "workspace:*",
         "@getitdone/typescript-config": "workspace:*",
+        "@size-limit/preset-small-lib": "12.1.0",
         "@types/node": "^20",
         "eslint": "^9.35.0",
+        "size-limit": "12.1.0",
         "tsup": "8.5.1",
         "typescript": "^6.0.3",
         "vitest": "4.1.11"
