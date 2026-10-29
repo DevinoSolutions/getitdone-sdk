@@ -64,6 +64,16 @@ export type {
     SetDailyPlanStatusQuery,
 } from './resources/daily-plan'
 export type { ListMembersQuery, Member } from './resources/members'
+export type {
+    AppendNoteBody,
+    AppendTaskNoteBody,
+    CreateNoteBody,
+    ListNotesQuery,
+    Note,
+    NotePreview,
+    TaskNoteResult,
+    UpdateNoteBody,
+} from './resources/notes'
 export type { Organization } from './resources/organizations'
 export type {
     CreateProjectBody,

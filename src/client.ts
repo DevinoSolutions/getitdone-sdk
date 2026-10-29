@@ -16,6 +16,7 @@ import { ApiKeys } from './resources/api-keys'
 import { Attachments } from './resources/attachments'
 import { DailyPlanResource } from './resources/daily-plan'
 import { Members } from './resources/members'
+import { Notes } from './resources/notes'
 import { Organizations } from './resources/organizations'
 import { Projects } from './resources/projects'
 import { Tasks } from './resources/tasks'
@@ -92,6 +93,7 @@ export class GetItDone {
     readonly baseUrl: string
     readonly organizations: Organizations
     readonly members: Members
+    readonly notes: Notes
     readonly projects: Projects
     readonly tasks: Tasks
     readonly dailyPlan: DailyPlanResource
@@ -141,6 +143,7 @@ export class GetItDone {
         })
         this.organizations = new Organizations(this.core)
         this.members = new Members(this.core)
+        this.notes = new Notes(this.core)
         this.projects = new Projects(this.core)
         this.tasks = new Tasks(this.core)
         this.dailyPlan = new DailyPlanResource(this.core)
