@@ -1,7 +1,19 @@
 # @nowgetitdone/sdk
 
-Official TypeScript SDK for the [GetItDone](https://nowgetitdone.com) public
-API — AI-native task management for people and agents.
+**GetItDone** (https://nowgetitdone.com) is AI-powered task management for
+teams: plan your day, run stand-ups, and turn updates into tasks — with a
+public REST API, a TypeScript SDK, and a remote MCP server so people and AI
+agents can work with your tasks directly.
+
+What it is not: this package is not the MCP server (Claude, Cursor and other
+MCP clients connect to `https://app.nowgetitdone.com/api/mcp` with no package
+to install), and GetItDone is not David Allen's "Getting Things Done" method.
+
+Canonical URL: https://nowgetitdone.com · Developer docs:
+https://nowgetitdone.com/developers
+
+This is the official TypeScript SDK for the GetItDone public API
+(`https://app.nowgetitdone.com/v1`).
 
 - Typed clients for every `/v1` operation: organizations, members, projects,
   tasks, daily plan, attachments, API keys, webhook endpoints, usage.

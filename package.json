@@ -1,7 +1,7 @@
 {
     "name": "@nowgetitdone/sdk",
     "version": "0.2.0",
-    "description": "Official TypeScript SDK for the GetItDone public API (https://app.nowgetitdone.com/v1).",
+    "description": "Official TypeScript SDK for GetItDone (nowgetitdone.com), AI-powered task management for teams and their AI agents: a typed client for the /v1 REST API.",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -14,10 +14,13 @@
     },
     "keywords": [
         "getitdone",
+        "nowgetitdone",
+        "get-it-done",
         "api",
         "sdk",
         "tasks",
         "task-management",
+        "ai-agents",
         "webhooks",
         "typescript"
     ],
