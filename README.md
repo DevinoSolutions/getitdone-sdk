@@ -36,7 +36,7 @@ dependency (types).
 ## Quickstart
 
 Create an API key in [app.nowgetitdone.com](https://app.nowgetitdone.com)
-under **Settings → API keys**, then:
+under **Profile → API Keys**, then:
 
 ```ts
 import GetItDone from '@nowgetitdone/sdk'
