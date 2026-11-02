@@ -45,6 +45,19 @@ describe('API key sourcing', () => {
         }
     })
 
+    it('points a developer without a key at the API Keys page itself, a published URL the app redirects to the right tab', () => {
+        const saved = process.env.GETITDONE_API_KEY
+        delete process.env.GETITDONE_API_KEY
+        try {
+            const { fetchFn } = createQueuedFetch([])
+            expect(() => new GetItDone({ fetch: fetchFn })).toThrowError(
+                'https://app.nowgetitdone.com/settings/api-keys.',
+            )
+        } finally {
+            if (saved !== undefined) process.env.GETITDONE_API_KEY = saved
+        }
+    })
+
     it('falls back to the GETITDONE_API_KEY environment variable and sends that key as the Bearer credential', async () => {
         const saved = process.env.GETITDONE_API_KEY
         process.env.GETITDONE_API_KEY = 'gid_test_env_fallback'

@@ -119,7 +119,7 @@ export class GetItDone {
         if (!apiKey) {
             throw new GetItDoneError(
                 'Missing API key: pass `apiKey` to new GetItDone({...}) or set the GETITDONE_API_KEY environment variable. ' +
-                    'Create one at https://app.nowgetitdone.com/settings (API keys).',
+                    'Create one at https://app.nowgetitdone.com/settings/api-keys.',
             )
         }
         if (options.authStyle === 'x-api-key') {
