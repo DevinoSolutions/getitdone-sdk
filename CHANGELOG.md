@@ -1,5 +1,15 @@
 # @nowgetitdone/sdk
 
+## 0.3.0
+
+### Minor Changes
+
+- 804a05e: Add `notes` resource: `list()`, `retrieve()`, `create()`, `append()`, `update()` for workspace notes and `appendTaskNote()` for task notes.
+
+### Patch Changes
+
+- 237f460: The "Missing API key" error now links https://app.nowgetitdone.com/settings/api-keys, the API Keys page itself, instead of the bare /settings.
+
 ## 0.2.0
 
 ### Minor Changes
